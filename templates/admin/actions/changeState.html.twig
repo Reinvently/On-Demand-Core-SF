@@ -1,0 +1,6 @@
+{% for transition, name in item.transitions %}
+    {% if workflow_can(item, transition) %}
+        <a href="/admin/order/change-state?id={{ item.id }}&transition={{ transition }}">{{ name }}</a>
+    {% endif %}
+{% endfor %}
+<br>

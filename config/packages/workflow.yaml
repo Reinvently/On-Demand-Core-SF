@@ -1,0 +1,46 @@
+framework:
+  workflows:
+    order:
+      type: "state_machine"
+      marking_store:
+        type: single_state
+        arguments:
+          # field name to be used for the state machine
+          - state
+      supports:
+        - App\Entity\Order
+
+      # default state
+      initial_place: new
+
+      places:
+        # all possible states
+        - new
+        - confirmed
+        - picked-up
+        - delivered
+        - cancelled
+        - cancelled-by-system
+        - aborted
+      transitions:
+        checkout:
+          from: new
+          to: confirmed
+        backToNew:
+          guard: "has_role('ROLE_ADMIN')"
+#          guard: "has_role('ROLE_ADMIN') and subject.isRejectable()"
+          from: confirmed
+          to: new
+        pickUp:
+          from: confirmed
+          to: picked-up
+        deliver:
+          from: picked-up
+          to: delivered
+        cancel:
+#          guard: "is_authenticated"
+          from: [new, confirmed, picked-up]
+          to: cancelled
+        abort:
+          from: new
+          to: aborted
